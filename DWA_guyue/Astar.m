@@ -4,7 +4,7 @@ X_Length = 20;
 Y_Length = 20;
 
 Start_Node = [3,4];
-Target_Node = [7,4];
+Target_Node = [14,15];
 Obs_Node_List = [[5,1];[5,2];[5,3];[5,4];[5,5];[5,6]];
 
 %% Astar算法

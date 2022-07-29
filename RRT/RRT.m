@@ -1,7 +1,7 @@
 clear all;
 close all;
 obstacleList = [[3,3,1.5];[12,2,3];[3,9,2];[9,11,2]];
-start = [1,0];
+start = [2,1];
 goal = [15,12];
 animation = true;
 
@@ -21,9 +21,10 @@ Node.y = 0;
 Node.cost = 0;
 Node.parent_index = 0;
 
-path = rrt_planning(start,goal,param);
+% path = rrt_planning(start,goal,param);
+path = rrt_star_planning(start,goal,param);
 
-
+%% rrt
 function path = rrt_planning(start,goal,param)
 
 start_node.x = start(1);
@@ -31,7 +32,7 @@ start_node.y = start(2);
 start_node.cost = 0;
 start_node.parent_index = 0;
 
-goal_node.x = goal(1);
+goal_node.x = goal(1); 
 goal_node.y = goal(2);
 goal_node.cost = 0;
 goal_node.parent_index = 0;
@@ -71,6 +72,63 @@ end
 
 end
 
+%% rrt*
+function path = rrt_star_planning(start,goal,param)
+start_node.x = start(1);
+start_node.y = start(2);
+start_node.cost = 0;
+start_node.parent_index = 0;
+
+goal_node.x = goal(1);
+goal_node.y = goal(2);
+goal_node.cost = 0;
+goal_node.parent_index = 0;
+
+node_list = [start_node];
+path = [];
+lastPathLength = Inf;
+
+for i= 1:param.maxIter
+    rnd = sample(param);
+    n_ind = get_nearest_list_index(node_list,rnd);
+    nearestNode = node_list(n_ind);
+    
+    % steer
+    theta = atan2(rnd(2) - nearestNode.y, rnd(1) - nearestNode.x);
+    newNode = get_new_node(theta, node_list, n_ind, nearestNode,param);
+    
+    noCollision = check_segment_collision(newNode.x, newNode.y, nearestNode.x, nearestNode.y,param);
+    if noCollision
+        nearInds = find_near_nodes(newNode,node_list);
+        newNode = choose_parent(newNode,nearInds,node_list,param);
+        
+        node_list = [node_list;newNode];
+        
+        newNode = rewire(newNode,nearInds,node_list,param);
+        
+        if param.animation
+            draw_graph(newNode,node_list,path,param);
+        end
+        
+        if is_near_goal(newNode,param)
+            if check_segment_collision(newNode.x,newNode.y,param.goal(1),param.goal(2),param)
+                [lastIndex,c] = size(node_list);
+                tmpPath = get_final_course(lastIndex,node_list,param);
+                tmpPathLen = get_path_len(tmpPath);
+                if lastPathLength > tmpPathLen
+                    path = tmpPath;
+                    lastPathLength = tmpPathLen;
+                    sprintf("current path length: %d",tmpPathLen);
+                end
+            end         
+        end
+    end
+end
+
+
+end
+
+%% function aux
 function rnd = sample(param)
 if(rand*100 > param.goalSampleRate)
     rnd = [randi([param.randArea(1),param.randArea(2)],1),randi([param.randArea(1),param.randArea(2)],1)];
@@ -87,6 +145,7 @@ for i = 1:r
     dlist = [dlist;(node.x -rnd(1))^2 + (node.y - rnd(2))^2];
 end
 n_ind = find(dlist == min(dlist));
+n_ind = n_ind(1);
 end
 
 function newNode = get_new_node(theta, node_list, n_ind, nearestNode,param)
@@ -147,7 +206,7 @@ axis([param.randArea(1) param.randArea(2) param.randArea(1) param.randArea(2)]);
 grid on;
 scatter(param.start(1),param.start(2),100,"r");
 scatter(param.goal(1),param.goal(2),100,"k");
-pause(1);
+pause(0.1);
 end
 
 function bool_ans = is_near_goal(node,param)
@@ -184,5 +243,75 @@ for i = 2:size_path(1)
     node2_x = path(i-1,1);
     node2_y = path(i-1,2);
     pathLen = pathLen + sqrt((node1_x -node2_x)^2 + (node1_y - node2_y)^2); 
+end
+end
+
+function near_inds = find_near_nodes(newNode,node_list)
+[n_node,c] = size(node_list);
+r = 50 * sqrt(log(n_node) / n_node);% 检测圆形大小
+d_list = [];
+for i = 1:n_node
+    node = node_list(i);
+    d_list = [d_list; (node.x - newNode.x)^2 + (node.y - newNode.y)^2];
+end
+near_inds = [];
+for i = 1:n_node
+    if(d_list(i) < r^2)
+        near_inds = [near_inds;i];
+    end
+end
+end
+
+function newNode = choose_parent(newNode,nearInds,node_list,param)
+if isempty(nearInds)
+    newNode = newNode;
+    return;
+end
+dList = [];
+[r,c] = size(nearInds);
+for i = 1:r
+    dx = newNode.x - node_list(i).x;
+    dy = newNode.y - node_list(i).y;
+    d = hypot(dx,dy);
+    theta = atan2(dy,dx);
+    if check_collision(node_list(i),theta,d,param)
+        dList = [dList;node_list(i).cost + d];
+    else
+        dList = [dList;Inf];
+    end
+end
+minCost = min(dList);
+minInd = find(dList == min(dList));
+minInd = minInd(1);
+if minCost == Inf
+    newNode = newNode;
+    return;
+end
+newNode.cost = minCost;
+newNode.parent_index = minInd;
+end
+
+function bool_ans = check_collision(nearNode,theta,d,param)
+tmpNode = nearNode;
+end_x = tmpNode.x + cos(theta)*d;
+end_y = tmpNode.y + sin(theta)*d;
+
+bool_ans = check_segment_collision(tmpNode.x,tmpNode.y,end_x,end_y,param);
+end
+
+function newNode = rewire(newNode,nearInds,node_list,param)
+[n_node,c] = size(node_list);
+[r,c] = size(nearInds);
+for i = 1:r
+    nearNode = node_list(i);
+    d = sqrt((nearNode.x - newNode.x)^2 + (nearNode.y + newNode.y)^2);
+    s_cost = newNode.cost + d;
+    if nearNode.cost > s_cost
+        theta = atan2(newNode.y - nearNode.y,newNode.x - nearNode.x);
+        if check_collision(nearNode,theta,d,param)
+            nearNode.parent = n_node;
+            nearNode.cost = s_cost;
+        end
+    end
 end
 end

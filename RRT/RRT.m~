@@ -1,7 +1,7 @@
 clear all;
 close all;
 obstacleList = [[3,3,1.5];[12,2,3];[3,9,2];[9,11,2]];
-start = [1,0];
+start = [2,1];
 goal = [15,12];
 animation = true;
 
@@ -22,7 +22,8 @@ Node.cost = 0;
 Node.parent_index = 0;
 
 % path = rrt_planning(start,goal,param);
-path = rrt_star_planning(start,goal,param);
+% path = rrt_star_planning(start,goal,param);
+path = informed_rrt_star_planning(start,goal,param);
 
 %% rrt
 function path = rrt_planning(start,goal,param)
@@ -89,9 +90,9 @@ path = [];
 lastPathLength = Inf;
 
 for i= 1:param.maxIter
-    rnd = sample(param)
-    n_ind = get_nearest_list_index(node_list,rnd)
-    nearestNode = node_list(n_ind)
+    rnd = sample(param);
+    n_ind = get_nearest_list_index(node_list,rnd);
+    nearestNode = node_list(n_ind);
     
     % steer
     theta = atan2(rnd(2) - nearestNode.y, rnd(1) - nearestNode.x);
@@ -128,6 +129,77 @@ end
 
 end
 
+%% Informe rrt*
+function path = informed_rrt_star_planning(start,goal,param)
+start_node.x = start(1);
+start_node.y = start(2);
+start_node.cost = 0;
+start_node.parent_index = 0;
+
+goal_node.x = goal(1);
+goal_node.y = goal(2);
+goal_node.cost = 0;
+goal_node.parent_index = 0;
+
+node_list = [start_node];
+path = [];
+
+cBest = Inf;
+%compute the sampling space
+cMin = sqrt((start_node.x - goal_node.x)^2 + (start_node.y -goal_node.y)^2);
+xCenter = [(start_node.x + goal_node.x)/2,(start_node.y + goal_node.y)/2,0];
+a1 = [(goal_node.x - start_node.x)/cMin,(goal_node.y - start_node.y)/cMin,0];
+
+e_theta = atan2(a1(2),a1(1));
+
+C = [cos(e_theta), -sin(e_theta), 0;
+    sin(e_theta), cos(e_theta), 0;
+    0, 0, 1];
+
+for i= 1:param.maxIter
+    rnd = informed_sample(cBest,cMin,xCenter,C,param);
+    
+    n_ind = get_nearest_list_index(node_list,rnd);
+    nearestNode = node_list(n_ind);
+    
+    % steer
+    theta = atan2(rnd(2) - nearestNode.y, rnd(1) - nearestNode.x);
+    newNode = get_new_node(theta, node_list, n_ind, nearestNode,param);
+    
+    noCollision = check_segment_collision(newNode.x, newNode.y, nearestNode.x, nearestNode.y,param);
+    if noCollision
+        nearInds = find_near_nodes(newNode,node_list);
+        newNode = choose_parent(newNode,nearInds,node_list,param);
+        
+        node_list = [node_list;newNode];
+        
+        newNode = rewire(newNode,nearInds,node_list,param);
+        
+        if is_near_goal(newNode,param)
+            if check_segment_collision(newNode.x,newNode.y,param.goal(1),param.goal(2),param)
+                [lastIndex,c] = size(node_list);
+                tmpPath = get_final_course(lastIndex,node_list,param);
+                tmpPathLen = get_path_len(tmpPath);
+                if tmpPathLen < cBest
+                    path = tmpPath;
+                    cBest = tmpPathLen;
+                    sprintf("current path length: %d",tmpPathLen);
+                end
+            end         
+        end
+    end
+    
+    if param.animation
+        draw_graph_informed_RRTStar(xCenter,cBest,cMin,e_theta,rnd,node_list,path,param);
+        
+    end
+end
+
+
+end
+
+
+
 %% function aux
 function rnd = sample(param)
 if(rand*100 > param.goalSampleRate)
@@ -142,10 +214,10 @@ dlist = [];
 [r,c] = size(node_list);
 for i = 1:r
     node = node_list(i);
-    dlist = [dlist;(node.x -rnd(1))^2 + (node.y - rnd(2))^2]
+    dlist = [dlist;(node.x -rnd(1))^2 + (node.y - rnd(2))^2];
 end
 n_ind = find(dlist == min(dlist));
-n_
+n_ind = n_ind(1);
 end
 
 function newNode = get_new_node(theta, node_list, n_ind, nearestNode,param)
@@ -206,7 +278,7 @@ axis([param.randArea(1) param.randArea(2) param.randArea(1) param.randArea(2)]);
 grid on;
 scatter(param.start(1),param.start(2),100,"r");
 scatter(param.goal(1),param.goal(2),100,"k");
-pause(1);
+pause(0.1);
 end
 
 function bool_ans = is_near_goal(node,param)
@@ -292,10 +364,9 @@ newNode.parent_index = minInd;
 end
 
 function bool_ans = check_collision(nearNode,theta,d,param)
-nearNode
-tmpNode = nearNode
-end_x = tmpNode.x + cos(theta)*d
-end_y = tmpNode.y + sin(theta)*d
+tmpNode = nearNode;
+end_x = tmpNode.x + cos(theta)*d;
+end_y = tmpNode.y + sin(theta)*d;
 
 bool_ans = check_segment_collision(tmpNode.x,tmpNode.y,end_x,end_y,param);
 end
@@ -315,4 +386,92 @@ for i = 1:r
         end
     end
 end
+end
+
+function rnd = informed_sample(cMax,cMin,xCenter,C,param)
+if cMax < Inf
+    r = [cMax / 2.0,
+         sqrt(cMax^2 - cMin^2)/2.0,
+         sqrt(cMax^2 - cMin^2)/2.0];
+     L = diag(r);
+     xBall = sample_unit_ball();
+     A = dot(C,L);
+     rnd = dot(A,xBall') + xCenter';
+     rnd = [rnd(1) rnd(2)];
+     
+else
+    rnd = sample(param);
+    
+end
+
+end
+
+function uni_circle = sample_unit_ball()
+a = rand;
+b = rand;
+if b < a
+    tmp = a;
+    a = b;
+    b = tmp;
+end
+sample_point = [b*cos(2 * pi * a / b),(b * sin(2 * pi * a /b))];
+
+uni_circle = [sample_point(1),sample_point(2),0];
+
+end
+
+function draw_graph_informed_RRTStar(xCenter,cBest,cMin,e_theta,rnd,node_list,path,param)
+figure(1);
+hold on;
+plot(rnd(1),rnd(2));
+if cBest ~= Inf
+    [elat,elon] = plot_ellipse(xCenter, cBest, cMin, e_theta);
+    plot(elat,elon);
+end
+
+[r,c] = size(node_list);
+for i = 1:r
+    node = node_list(i);
+    if(node.parent_index ~= 0)
+        plot([node.x,node_list(node.parent_index).x],[node.y,node_list(node.parent_index).y],"-g");
+    end
+end
+
+[r,c] = size(param.obstacleList);
+for i = 1:r
+    obs = param.obstacleList(i,:);
+    scatter(obs(1),obs(2),obs(3)*100);
+    
+end
+if ~isempty(path)
+    plot(path(:,1),path(:,2));
+end
+
+axis([param.randArea(1) param.randArea(2) param.randArea(1) param.randArea(2)]);
+grid on;
+scatter(param.start(1),param.start(2),100,"r");
+scatter(param.goal(1),param.goal(2),100,"k");
+pause(0.1);
+
+end
+
+function [elat,elon] = plot_ellipse(xCenter, cBest, cMin, e_theta)
+a = sqrt(cBest^ 2 - cMin^2) / 2.0;
+b = cBest / 2.0;
+
+cx = xCenter(1);
+cy = xCenter(2);
+
+Rot = [cos(e_theta), -sin(e_theta);
+    sin(e_theta), cos(e_theta)];
+for i = 0:0.1
+t = np.arange(0, 2 * math.pi + 0.1, 0.1)
+
+x = [a * math.cos(it) for it in t]
+y = [b * math.sin(it) for it in t]
+rot = Rot.from_euler('z', -angle).as_matrix()[0:2, 0:2]
+fx = rot @ np.array([x, y])
+px = np.array(fx[0, :] + cx).flatten()
+py = np.array(fx[1, :] + cy).flatten()
+
 end

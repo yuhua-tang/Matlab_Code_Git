@@ -115,7 +115,7 @@ plot(linear_velocity);
 plot(angular_velocity);
 
 %% 
-% TODO: sim 利用获得线速度，角速度根据差分模型获得轨迹图
+% TODO: sim 利用
 
 
 %%

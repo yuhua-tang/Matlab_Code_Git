@@ -1,5 +1,6 @@
 clc;clear;close all;
-path = ginput() * 100.0;
+path = [1,1;
+        5,2];
 
 n_order = 7;
 n_seg = size(path, 1) - 1;

@@ -13,7 +13,7 @@ ts = zeros(n_seg, 1);
 %根据距离长度计算每两个点之间的时间分配
 dist     = zeros(n_seg, 1);
 dist_sum = 0;
-T        = 25;
+T        = 5;
 t_sum    = 0;
 
 for i = 1:n_seg
@@ -42,7 +42,7 @@ VX_n = [];
 VY_n = [];
 Time = [];
 k = 1;
-tstep = 0.01;
+tstep = 0.1;
 n_order_tmp = n_order;
 for i=0:n_seg-1
     %#####################################################
@@ -87,6 +87,27 @@ xlabel('Time');
 ylabel('Velocity');
 legend('vx','vy');
 
+linear_velocity = sqrt(VX_n.^2 + VY_n.^2);
+
+kappa_arr = [];
+posi_arr = [];
+norm_arr = [];
+for num = 2:(length(X_n)-1)
+    x = X_n(num-1:num+1);
+    y = Y_n(num-1:num+1);
+    [kappa,norm_l] = PJcurvature(x,y);
+    posi_arr = [posi_arr;[x,y]];
+    kappa_arr = [kappa_arr;kappa];
+    norm_arr = [norm_arr;norm_l];
+end
+
+figure(3)
+hold on;
+% plot(X_n,Y_n,'-');
+plot(kappa_arr,'*');
+
+
+%%
 % Minisnap求解器
 function poly_coef = MinimumSnapQPSolver(waypoints, ts, n_seg, n_order)
     % 起点约束
@@ -104,4 +125,24 @@ function poly_coef = MinimumSnapQPSolver(waypoints, ts, n_seg, n_order)
     f = zeros(size(Q,1),1);
     % 求解多项式系数
     poly_coef = quadprog(Q,f,[],[],Aeq, beq);
+end
+
+function [kappa,norm_k] = PJcurvature(x,y)
+    x = reshape(x,3,1);
+    y = reshape(y,3,1);
+    t_a = norm([x(2)-x(1),y(2)-y(1)]);
+    t_b = norm([x(3)-x(2),y(3)-y(2)]);
+    
+    M =[[1, -t_a, t_a^2];
+        [1, 0,    0    ];
+        [1,  t_b, t_b^2]];
+
+    a1 = M\x;
+    b2 = M\y;
+    a = inv(M)*(x);
+    b = inv(M)*(y);
+    
+
+    kappa  = 2.*(a(3)*b(2)-b(3)*a(2)) / (a(2)^2.+b(2)^2.)^(1.5);
+    norm_k =  [b(2),-a(2)]/sqrt(a(2)^2.+b(2)^2.);
 end

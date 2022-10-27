@@ -72,7 +72,7 @@ for i=0:n_seg-1
     end
     
 end
-figure(1);
+figure(5);
 plot(X_n, Y_n , 'Color', [0 1.0 0], 'LineWidth', 2);
 % plot(X_n,'Color', [0 1.0 0], 'LineWidth', 2);
 hold on
@@ -116,6 +116,16 @@ plot(angular_velocity);
 
 %% 
 % TODO: sim 利用获得线速度，角速度根据差分模型获得轨迹图
+robot_pose = [path(1,:), 0];
+delta_t = tstep;
+robot_pose_record = [];
+for i = 1:(length(linear_velocity))
+   robot_pose = kinematic(robot_pose,linear_velocity(i),-angular_velocity(i),delta_t);
+   robot_pose_record = [robot_pose_record;
+                        robot_pose'];
+end
+figure(5)
+plot(robot_pose_record(:,1),robot_pose_record(:,2))
 
 
 %%
@@ -156,4 +166,10 @@ function [kappa,norm_k] = PJcurvature(x,y)
 
     kappa  = 2.*(a(3)*b(2)-b(3)*a(2)) / (a(2)^2.+b(2)^2.)^(1.5);
     norm_k =  [b(2),-a(2)]/sqrt(a(2)^2.+b(2)^2.);
+end
+
+function [next_pose] = kinematic(current_pose, velelocity, omega, deltaT)
+ next_pose = [current_pose(1) + velelocity * deltaT * cos(current_pose(3) + omega * deltaT);
+              current_pose(2) + velelocity * deltaT * sin(current_pose(3) + omega* deltaT);
+              current_pose(3) + omega * deltaT];
 end

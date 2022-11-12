@@ -60,7 +60,7 @@ plot(B(1,:),B(2,:),'-');
 figure(2)
 hold on
 plot(kappa_arr,'*');
-plot(-K,'.')
+plot(K,'.')
 
 %% obstacle detection range sim or trajectory expansion 
 robot_form = [-0.7,0.5;
@@ -68,10 +68,10 @@ robot_form = [-0.7,0.5;
               0.7,-0.5;
               -0.7,-0.5]
           
-robot_form_2 = [-0.9,0.5;
-              1.2,0.5;
-              1.2,-0.5;
-              -0.9,-0.5]
+robot_form_2 = [-0.0,0.5;
+              0.7,0.5;
+              0.7,-0.5;
+              -0.0,-0.5]
           
 robot_pos = [1;0;pi/6];
 robot_global_form = robot2gobal(robot_pos,robot_form)
@@ -102,7 +102,7 @@ theta = [theta(1,:);theta];
 
 figure(4)
 hold on;
-for i = 1:5:length(B)
+for i = 1:1:length(B)
     robot_pos = [B(1,i),B(2,i),theta(i)];
     
     robot_global_form = robot2gobal(robot_pos,robot_form);

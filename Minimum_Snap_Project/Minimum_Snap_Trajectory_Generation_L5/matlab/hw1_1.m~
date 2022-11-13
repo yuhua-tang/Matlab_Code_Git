@@ -131,13 +131,11 @@ path_theta = [path_theta;path_theta(end)];
 path_step_dt = [path_step_dt;0];
 linear_v = [];
 angular_w = [];
-omega_w = [];
+
 for i = 1:length(linear_velocity)
     [linear_v_tmp,angular_w_tmp] = tranVXVY2VW(VX_n(i),VY_n(i),path_theta(i),path_length(i))
-    omega_w_tmp = getOmega(linear_velocity(i),path_theta(i),path_length(i),VX_n(i));
     linear_v = [linear_v;linear_v_tmp];
     angular_w = [angular_w;angular_w_tmp];
-    omega_w = [omega_w;omega_w_tmp];
    
 end
 
@@ -168,8 +166,7 @@ plot(linear_velocity);
 plot(angular_velocity);
 plot(linear_v);
 plot(angular_w);
-plot(omega_w);
-legend('linear-velocity','angular-velocity','linear-v','angular-w','omega-w')
+legend('linear-velocity','angular-velocity','linear-v','angular-w')
 %画位置
 robot_pose_2 = [path(1,:), 0];
 robot_pose_record_2 = [];
@@ -246,6 +243,6 @@ function [v,omega] = tranVXVY2VW(VX,VY,theta,L)
     omega = trans_ans(2);
 end
 
-function omega = getOmega(V,theta,L,Vx)
-    omega = (V * cos(theta) - Vx)/(L*sin(theta));
+function omega = getOmega(linear_velocity,theta,L,Vx)
+
 end

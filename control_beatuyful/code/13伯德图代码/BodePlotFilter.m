@@ -1,6 +1,6 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control;
+% pkg load control;
 %% 定义G(s)
 G_s = tf([1],[1 1]);
 %% 定义正弦输入 + 噪音

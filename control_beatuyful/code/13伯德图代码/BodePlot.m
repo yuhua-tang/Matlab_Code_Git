@@ -1,6 +1,6 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control;
+% pkg load control;
 %% 定义G(s)
 G1_s = tf([1],[1 100]);
 G2_s = tf ([1 0],[1 1]);

@@ -1,7 +1,7 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 s = tf('s');
 G_s = (s+1)/(s*(s +2)*(s+3)*(s+4));
 rlocus(G_s); 

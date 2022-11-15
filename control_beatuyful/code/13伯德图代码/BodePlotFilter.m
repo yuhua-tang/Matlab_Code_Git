@@ -1,16 +1,16 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 % pkg load control;
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 G_s = tf([1],[1 1]);
-%% ¶¨ÒåÕıÏÒÊäÈë + ÔëÒô
+%% å®šä¹‰æ­£å¼¦è¾“å…¥ + å™ªéŸ³
 t = 0 : 0.01 : 20;
 u = sin(t);
 u =  u + 0.2*rand(size(t));
 subplot (2,1,1);
 plot (t,u);
 grid on;
-%% Í¨¹ıÂË²¨Æ÷
+%% é€šè¿‡æ»¤æ³¢å™¨
 y = lsim (G_s, u, t);
 subplot (2,1,2);
 plot (t,y);

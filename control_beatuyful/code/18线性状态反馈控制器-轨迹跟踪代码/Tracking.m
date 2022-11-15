@@ -1,10 +1,10 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%% ¶¨Òå·ÂÕæÇø¼ä
+%% å®šä¹‰ä»¿çœŸåŒºé—´
 tspan =[0 40];
 z0 = [0;0];
-%% Çó½â
+%% æ±‚è§£
 [t,z]=ode45(@sys,tspan,z0);
 hold on; 
 plot (t,z(:,1));

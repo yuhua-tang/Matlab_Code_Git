@@ -1,7 +1,7 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%% ¶¨Òå²ÎÊı
+%% å®šä¹‰å‚æ•°
 S = 5;
 x0 = [70];
 h = 175;
@@ -9,19 +9,19 @@ a = 20;
 Ei = [2500,2100,2500];
 alpha = 1.3;
 Ea = [0, 0, 500];
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 G_s = tf([1],[7000,10*alpha]);
-%% ¶¨ÒåÈÅ¶¯ºÍÊäÈë
+%% å®šä¹‰æ‰°åŠ¨å’Œè¾“å…¥
 d = -alpha*(6.25*h-5*a+S);
 u1 = (Ei(1)-Ea(1));
 u2 = (Ei(2)-Ea(2));
 u3 = (Ei(3)-Ea(3));
-%% ÏµÍ³µÄÊä³ö
+%% ç³»ç»Ÿçš„è¾“å‡º
 t = 0: 1: 3000;
 x1 = (u1+d)* step(G_s,t) + 7000 * x0 * impulse(G_s,t) ;
 x2 = (u2+d)* step(G_s,t) + 7000 * x0 * impulse(G_s,t) ;
 x3 = (u3+d)* step(G_s,t) + 7000 * x0 * impulse(G_s,t) ;
-%% »æÍ¼
+%% ç»˜å›¾
 plot (x1, 'b');
 hold on 
 plot (x2, 'k');

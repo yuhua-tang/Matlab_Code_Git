@@ -1,13 +1,13 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 %pkg load control
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 s = tf('s');
 G_s = (s+1)/(s+3);
-%% ¶¨ÒåC(s)
+%% å®šä¹‰C(s)
 C_s =  tf([1],[1 2]);
-%% ±Õ»·´«µİº¯Êı
-%% ·½·¨1
+%% é—­ç¯ä¼ é€’å‡½æ•°
+%% æ–¹æ³•1
 Gcl_1 = (G_s*C_s)/(1+C_s*G_s);
-%% ·½·¨2
+%% æ–¹æ³•2
 Gcl_2 = feedback(G_s*C_s,1);

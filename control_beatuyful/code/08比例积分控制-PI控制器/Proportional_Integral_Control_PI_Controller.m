@@ -1,15 +1,15 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 G_s = tf([1], [1,1]);
-%% ¶¨Òå±ÈÀı»ı·ÖÎ¢·Ö¿ØÖÆ
+%% å®šä¹‰æ¯”ä¾‹ç§¯åˆ†å¾®åˆ†æ§åˆ¶
 kp = 0;
 ki = 1; 
 kd = 0;
 C_s = pid(kp, ki, kd); 
 
-%% ·ÂÕæ
+%% ä»¿çœŸ
 sys = feedback (C_s*G_s, 1);
 step(sys);
 hold on;

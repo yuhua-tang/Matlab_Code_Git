@@ -1,11 +1,11 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 % pkg load control;
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 G1_s = tf([1],[1 100]);
 G2_s = tf ([1 0],[1 1]);
 G3_s = G1_s * G2_s;
-%% »æÍ¼
+%% ç»˜å›¾
 figure (1) 
 bode(G1_s);
 figure (2) 

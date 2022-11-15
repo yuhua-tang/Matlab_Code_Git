@@ -1,22 +1,22 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%% ¶¨ÒåG(s)
+%% å®šä¹‰G(s)
 s = tf('s');
 G_s = 1/((s+1)*(s+3));
 K=100;
 t = 0: .1: 5;
-%% »æÖÆÔ­´«µİº¯Êı¸ù¹ì¼£¼°ÆäÏìÓ¦
+%% ç»˜åˆ¶åŸä¼ é€’å‡½æ•°æ ¹è½¨è¿¹åŠå…¶å“åº”
 subplot(2,2,1);
 rlocus(G_s);
 subplot(2,2,2);
 sys_1 = feedback(K*G_s, 1)
 step (sys_1,t);
-%%%% ¶¨Òå²¹³¥Æ÷C(s)
+%%%% å®šä¹‰è¡¥å¿å™¨C(s)
 sz = -5;
 sp = -10;
 C_s = (s-sz)/(s-sp);
-%% Ê¹ÓÃ²¹³¥Æ÷ºóµÄ¸ù¹ì¼£¼°ÆäÏìÓ¦
+%% ä½¿ç”¨è¡¥å¿å™¨åçš„æ ¹è½¨è¿¹åŠå…¶å“åº”
 subplot(2,2,3);
 rlocus(G_s*C_s);
 subplot(2,2,4);

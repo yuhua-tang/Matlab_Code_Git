@@ -1,10 +1,10 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%%¶¨Òå²ÎÊı
+%%å®šä¹‰å‚æ•°
 zeta = [0, 0.2, 0.5, 1, 2];
 w_n = 10;
-%% ÇóÃ¿Ò»×ézetaµÄµ¥Î»½×Ô¾ÏìÓ¦
+%% æ±‚æ¯ä¸€ç»„zetaçš„å•ä½é˜¶è·ƒå“åº”
 t = 0:0.01:3;
 colorcode = ['r', 'b', 'g', 'k', 'y'];
 for i =1:length(zeta)

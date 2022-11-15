@@ -1,7 +1,7 @@
 clc;clear;close all;
-%% ¼ÓÔØControl Package,Ê¹ÓÃMatlabÔò×¢ÊÍÏÂ1ĞĞ
+%% åŠ è½½Control Package,ä½¿ç”¨Matlabåˆ™æ³¨é‡Šä¸‹1è¡Œ
 pkg load control
-%% ¶¨Òå¾ØÕóA,B
+%% å®šä¹‰çŸ©é˜µA,B
 A =[[ 0 1 0 0 ];
     [ -100 0 100 0];
     [0 0 0 1];

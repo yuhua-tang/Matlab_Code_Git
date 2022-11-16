@@ -1,6 +1,6 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control
+% pkg load control
 %% 定义一阶系统
 G_s = tf([5],[1 5]);
 %% 仿真

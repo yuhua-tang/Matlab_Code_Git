@@ -1,6 +1,6 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control
+% pkg load control
 %% 定义参数
   g=10;
   d=1;
@@ -11,8 +11,10 @@ pkg load control
  D = 0;
 %% 建立状态空间方程表达式
 sys = ss(A,B,C,D);
+[num,den] = ss2tf(A,B,C,D)
+G_s=tf(num,den)
 %% 定义初始状态
-z0=[pi/20;0];
+z0=[pi/2;0];
 %% 定义权重系数，求K
 q1=[100 0;0 1];
 r1=1;
@@ -28,7 +30,11 @@ r3=100;
 
 %% 定义闭环系统
 sys_cl1=ss(A-B*K1,[0;0],C,D);
+[num,den] = ss2tf((A-B*K1),[0;0],C,D)
+G_s2=tf(num,den)
 sys_cl2=ss(A-B*K2,[0;0],C,D);
+[num,den] = ss2tf((A-B*K2),[0;0],C,D)
+G_s3=tf(num,den)
 sys_cl3=ss(A-B*K3,[0;0],C,D);
 %% 仿真
 %% 对初始条件的响应

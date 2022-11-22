@@ -4,7 +4,7 @@ clc;clear;close all;
 %% 定义仿真区间
 tspan =[0: 0.1 : 20];
 %% 初始状态
-z0 = [6;6;0;0];
+z0 = [1;1;0;0];
 %% 求解
 [t,z]=ode45(@sys,tspan,z0);
 subplot(2,1,1)

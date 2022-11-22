@@ -1,12 +1,12 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control
+% pkg load control
 %% 定义G(s)
 G_s = tf([1], [1,1]);
 %% 定义比例积分微分控制
-kp = 0;
+kp = 1;
 ki = 1; 
-kd = 0;
+kd = 0.45;
 C_s = pid(kp, ki, kd); 
 
 %% 仿真

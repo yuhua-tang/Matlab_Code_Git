@@ -39,8 +39,7 @@ sz = -8;
 sp = -20;
 C_s_adv = (s-sz)/(s-sp);
 
-rlocus(G_s*C2_s*C_s_adv);
+rlocus(G_s*C2_s);
 
-figure(3)
-sys_4 = feedback(K*G_s*C2_s*C_s_adv, 1)
+sys_4 = feedback(K*C_s_adv*G_s*C2_s, 1)
 step (sys_4,t); 

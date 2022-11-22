@@ -1,4 +1,4 @@
-clc;clear;close all;
+% clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
 % pkg load control
 %% 定义仿真区间

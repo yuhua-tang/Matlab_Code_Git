@@ -1,6 +1,6 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control
+% pkg load control
 %% 定义参数
   g=10;
   d=1;

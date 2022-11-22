@@ -1,6 +1,6 @@
 clc;clear;close all;
 %% 加载Control Package,使用Matlab则注释下1行
-pkg load control
+% pkg load control
 %%定义参数
 zeta = [0, 0.2, 0.5, 1, 2];
 w_n = 10;

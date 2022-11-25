@@ -1,7 +1,7 @@
 close all,clc;
 clear all;
 P0 = [0 0];
-P3 = [0 1];
+P3 = [6 6];
 p0x = P0(1);
 p0y = P0(2);
 p3x = P3(1);
@@ -9,10 +9,10 @@ p3y = P3(2);
 p0yaw = -1.57;
 p3yaw = -1.57;
 dist = sqrt((p3x - p0x)^2 + (p3y - p0y)^2) / 3;
-p1x = 1;
+p1x = 3;
 p1y = 0;
-p2x = 1;
-p2y = 1;
+p2x = 3;
+p2y = 6;
     
 P1 = [p1x p1y];
 P2 = [p2x p2y];
@@ -175,7 +175,7 @@ end
 % new_form = ClockCheck(new_form_1,new_form_gravity_center_end);
 % new_form_plot_1 = [new_form_1;new_form_1(1,:)];
 % plot(new_form_plot_1(:,1),new_form_plot_1(:,2),'-.m')
-figure(9)
+figure(10)
 auto_merget_form = [auto_merget_form;auto_merget_form(1,:)];
 
 plot(auto_merget_form(:,1),auto_merget_form(:,2),'-.m')
@@ -437,15 +437,19 @@ function point_list_with_order = GetPointListOrder(point_list,start_point)
         for j = 1:row2
             if dist_list(i) == dist_index(j,1)
                 max_index_number = max_index_number + 1;
-                tmp_point_list_with_order = [tmp_point_list_with_order;point_list(dist_index(j,2),1:3),i];
+                tmp_point_list_with_order = [tmp_point_list_with_order;point_list(dist_index(j,2),1:3),max_index_number];
             end
         end
     end
     tmp_point_list_with_order
-    if max_number == 0
-        point_list_with_order = [];
-    else
-        point_list_with_order = point_list(1:index,:)
+    point_list_with_order = [];
+    for i = 1:row
+        if point_list(i,4) ~= 0
+            point_list_with_order = [point_list_with_order;point_list(i,:)];
+        end
+    end
+    if index == 1
+        point_list_with_order = flipud(point_list_with_order);
     end
     
     point_list_with_order = [point_list_with_order;tmp_point_list_with_order]

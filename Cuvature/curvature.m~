@@ -430,25 +430,18 @@ function point_list_with_order = GetPointListOrder(point_list,start_point)
     end
     dist_list = sort(dist_list);
     [row2,col2] = size(dist_list);
-    tmp_point_list_with_order = [];
-    
+    point_list_with_order = [];
+    point_list_with_order = point_list(1:index,:)
     max_index_number = max_number;
     for i =1:row2
         for j = 1:row2
             if dist_list(i) == dist_index(j,1)
                 max_index_number = max_index_number + 1;
-                tmp_point_list_with_order = [tmp_point_list_with_order;point_list(dist_index(j,2),1:3),i];
+                point_list_with_order = [point_list_with_order;point_list(dist_index(j,2),1:3),i];
             end
         end
     end
-    tmp_point_list_with_order
-    if max_number == 0
-        point_list_with_order = [];
-    else
-        point_list_with_order = point_list(1:index,:)
-    end
-    
-    point_list_with_order = [point_list_with_order;tmp_point_list_with_order]
+    point_list_with_order
     
 end
 
